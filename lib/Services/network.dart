@@ -12,6 +12,38 @@ class ApiClient {
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ));
+    
+    // Add interceptor for better error handling
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException e, ErrorInterceptorHandler handler) {
+          String errorMessage = 'Network error occurred';
+          
+          switch (e.type) {
+            case DioExceptionType.connectionTimeout:
+              errorMessage = 'Connection timeout - please check your internet connection';
+              break;
+            case DioExceptionType.receiveTimeout:
+              errorMessage = 'Request timeout - server is taking too long to respond';
+              break;
+            case DioExceptionType.connectionError:
+              errorMessage = 'No internet connection available';
+              break;
+            case DioExceptionType.badResponse:
+              errorMessage = 'Server error: ${e.response?.statusCode}';
+              break;
+            default:
+              errorMessage = 'Failed to connect to server';
+          }
+          
+          handler.next(DioException(
+            requestOptions: e.requestOptions,
+            message: errorMessage,
+            type: e.type,
+          ));
+        },
+      ),
+    );
   }
 
   Future<List<User>> getUsers() async {
@@ -21,7 +53,7 @@ class ApiClient {
           .map((json) => User.fromJson(json))
           .toList();
     } catch (e) {
-      throw Exception('Failed to fetch users: $e');
+      throw Exception('Failed to fetch users: ${e.toString()}');
     }
   }
 
@@ -32,7 +64,7 @@ class ApiClient {
           .map((json) => Post.fromJson(json))
           .toList();
     } catch (e) {
-      throw Exception('Failed to fetch posts: $e');
+      throw Exception('Failed to fetch posts: ${e.toString()}');
     }
   }
 
@@ -43,7 +75,7 @@ class ApiClient {
           .map((json) => Comment.fromJson(json))
           .toList();
     } catch (e) {
-      throw Exception('Failed to fetch comments: $e');
+      throw Exception('Failed to fetch comments: ${e.toString()}');
     }
   }
 
@@ -52,7 +84,7 @@ class ApiClient {
       final response = await _dio.get('/users/$userId');
       return User.fromJson(response.data);
     } catch (e) {
-      throw Exception('Failed to fetch user: $e');
+      throw Exception('Failed to fetch user: ${e.toString()}');
     }
   }
 }

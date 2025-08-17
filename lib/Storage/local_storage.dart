@@ -20,7 +20,7 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_usersKey);
     if (jsonString == null) return [];
-    
+
     final jsonList = jsonDecode(jsonString) as List;
     return jsonList.map((json) => User.fromJson(json)).toList();
   }
@@ -35,7 +35,7 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_postsKey);
     if (jsonString == null) return [];
-    
+
     final jsonList = jsonDecode(jsonString) as List;
     return jsonList.map((json) => Post.fromJson(json)).toList();
   }
@@ -50,7 +50,7 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('${_commentsKey}_$postId');
     if (jsonString == null) return [];
-    
+
     final jsonList = jsonDecode(jsonString) as List;
     return jsonList.map((json) => Comment.fromJson(json)).toList();
   }

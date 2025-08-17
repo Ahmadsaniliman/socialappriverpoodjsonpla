@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jsonapp/Features/connectivity_provider.dart';
 import 'package:jsonapp/Features/user_providers.dart';
 import 'package:jsonapp/Models/comment.dart';
 import 'package:jsonapp/Services/network.dart';
@@ -23,17 +22,13 @@ class CommentsNotifier extends AsyncNotifier<Map<int, List<Comment>>> {
       return currentState[postId]!;
     }
 
-    final isConnected = await ref.read(connectivityProvider.future);
-    
     List<Comment> comments;
-    if (isConnected) {
-      try {
-        comments = await _apiClient.getComments(postId);
-        await _localStorage.saveComments(postId, comments);
-      } catch (e) {
-        comments = await _localStorage.getComments(postId);
-      }
-    } else {
+    try {
+      // Try to fetch from API first
+      comments = await _apiClient.getComments(postId);
+      await _localStorage.saveComments(postId, comments);
+    } catch (e) {
+      // If network fails, fallback to cached data
       comments = await _localStorage.getComments(postId);
     }
 

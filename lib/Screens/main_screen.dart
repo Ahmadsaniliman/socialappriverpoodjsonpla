@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jsonapp/Screens/feed_screen.dart';
 import 'package:jsonapp/Screens/profile_screen.dart';
 import 'package:jsonapp/Screens/search_screen.dart';
-
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 

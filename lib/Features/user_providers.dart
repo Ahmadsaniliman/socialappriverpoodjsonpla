@@ -15,23 +15,37 @@ class UsersNotifier extends AsyncNotifier<List<User>> {
     _apiClient = ref.read(apiClientProvider);
     _localStorage = ref.read(localStorageProvider);
     
-    
     try {
+      // Try to fetch from API first
       final users = await _apiClient.getUsers();
       await _localStorage.saveUsers(users);
       return users;
     } catch (e) {
       // If network fails, fallback to cached data
-      return await _localStorage.getUsers();
+      final cachedUsers = await _localStorage.getUsers();
+      if (cachedUsers.isNotEmpty) {
+        return cachedUsers;
+      }
+      // If no cached data, rethrow the error
+      throw Exception('No internet connection and no cached data available');
     }
-    }
+  }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final users = await _apiClient.getUsers();
-      await _localStorage.saveUsers(users);
-      return users;
+      try {
+        final users = await _apiClient.getUsers();
+        await _localStorage.saveUsers(users);
+        return users;
+      } catch (e) {
+        // Return cached data if available during refresh
+        final cachedUsers = await _localStorage.getUsers();
+        if (cachedUsers.isNotEmpty) {
+          return cachedUsers;
+        }
+        rethrow;
+      }
     });
   }
 
@@ -65,4 +79,3 @@ class UsersNotifier extends AsyncNotifier<List<User>> {
 final usersProvider = AsyncNotifierProvider<UsersNotifier, List<User>>(
   () => UsersNotifier(),
 );
-

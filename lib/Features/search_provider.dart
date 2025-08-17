@@ -44,4 +44,3 @@ final filteredUsersProvider = Provider<List<User>>((ref) {
            user.email.toLowerCase().contains(query);
   }).toList();
 });
-

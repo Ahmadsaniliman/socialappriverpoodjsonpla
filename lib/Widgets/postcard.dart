@@ -153,4 +153,3 @@ class _PostCardState extends ConsumerState<PostCard> {
     );
   }
 }
-
