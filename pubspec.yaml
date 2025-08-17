@@ -37,14 +37,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
   dio: ^5.9.0
-  shared_preferences: ^2.5.3
-  connectivity_plus: ^6.1.5
-  json_annotation: ^4.9.0
-  freezed_annotation: ^3.1.0
-  cached_network_image: ^3.4.1
-  build_runner: ^2.4.13
-  freezed: ^3.0.0-0.0.dev
-  json_serializable: ^6.9.0
 
 dev_dependencies:
   flutter_test:
